@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>乱序二维数组排序</title>
+	<script type="text/javascript">
+	
+	function order_arrays(arr){
+		var arr_x=[];
+		for(var i=0;i<arr.length;i++){
+			arr_x.push(arr[i][0]);
+		}
+		arr_x.sort(function(x,y){
+			return x-y;
+		})
+
+		var arr_x_min=arr_x[0];
+		var arr_x_max=arr_x[arr_x.length-1];
+		//选取直线上的A，B两点。
+		arr.forEach(function(element,index){
+			if(arr[index][0]==arr_x_min){
+				line_A=arr[index];
+				arr.splice(index,1);
+			}
+			if(arr[index][0]==arr_x_max){
+				line_B=arr[index];
+				arr.splice(index,1);
+			}
+		})
+		console.log(arr.length);
+
+		
+		//斜率
+		 K=(line_A[1]-line_B[1])/(line_A[0]-line_B[0]);
+
+
+			//在直线上半部分
+			var lt_side=[];
+			var lt_side_x=[];
+			var change_lt_side=[];
+			//在直线下半部分
+			var gt_side=[];
+			var gt_side_x=[];
+			var change_gt_side=[];
+			var ASD=[];
+			last_arr=[];
+			last_arr.push(line_A);
+			for(var j=0;j<arr.length;j++){
+				if((arr[j][1]-line_A[1]-K*(arr[j][0]-line_A[0]))<0){
+					lt_side.push(arr[j]);
+					lt_side_x.push(arr[j][0]);
+				}if((arr[j][1]-line_A[1]-K*(arr[j][0]-line_A[0]))>0){
+					gt_side.push(arr[j]);
+					gt_side_x.push(arr[j][0]);
+				}
+				if((arr[j][1]-line_A[1]-K*(arr[j][0]-line_A[0]))==0){
+					ASD.push(arr[j]);
+				}
+			}
+			console.log(ASD.length);
+			
+
+			//直线上半部分的点按x进行升序
+			lt_side_x.sort(function(x,y){
+				return x-y;
+			});
+			//直线下半部分的点按x进行降序
+			gt_side_x.sort(function(x,y){
+				return y-x;
+			});
+			//将直线上半部分的点按x升序以后，将升序点放入新的数组
+			for(var m=0,len1=lt_side.length;m<len1;m++){
+				for(var n=0,len2=lt_side.length;n<len2;n++){
+					if(lt_side_x[m]==lt_side[n][0]){
+						last_arr.push(lt_side[n]);
+
+					}
+				}
+			}
+
+			last_arr.push(line_B);
+			//将直线下半部分的点按x降序以后，将降序点放入新的数组
+			for(var x=0,len3=gt_side.length;x<len3;x++){
+				for(var y=0,len3=gt_side.length;y<len3;y++){
+					if(gt_side_x[x]==gt_side[y][0]){
+						last_arr.push(gt_side[y]);
+					}
+				}
+			}
+			
+			console.log(last_arr.length);
+
+			
+		}
+
+//计算面积公式
+function caculateArea(points){
+	var sum=0;
+	var y_sum=0;
+	
+	for(var i=0,len_1=points.length;i<len_1;i++){
+		y_sum+=points[i][1];
+	}
+	var y_average=y_sum/points.length;
+	var rad=Math.cos(y_average*Math.PI/180);
+	for(var j=0,len_2=points.length-1;j<len_2;j++){
+		sum+=points[j][0]*points[j+1][1]*rad-points[j+1][0]*points[j][1]*rad;
+	}
+	
+	sum+=points[points.length-1][0]*points[0][1]*rad-points[0][0]*points[points.length-1][1]*rad;
+	
+	sum=Math.abs(sum*0.5*111.31955*111.31955);
+
+	return sum;
+
+}
+
+
+var pointsArr=[[116.35262385358, 40.012211415021],[116.35878085424, 40.013864812278],[116.34991015605, 40.016479434147],[116.35322036838, 40.013451062954],[116.35529616906, 40.020807687621],[116.352718358, 40.013246026128],[116.35271345817, 40.013279897394],[116.35865723639, 40.01625483598],[116.35209460935, 40.02053970541],[116.35828537153, 40.020926895648],[116.3483799857, 40.013383656894],[116.35271342658, 40.013320034065]];
+
+window.onload=function(){
+	order_arrays(pointsArr);
+	console.log(K);
+	console.log(caculateArea(last_arr));
+
+}
+
+	
+
+
+	</script>
+</head>
+<body>
+	
+</body>
+</html>          
+
